@@ -1,0 +1,91 @@
+version: 2.1
+
+orbs:
+  slack: circleci/slack@3.4.1
+
+docker: &DOCKER_NODE
+  docker:
+    - image: circleci/node:10.16
+
+jobs:
+  install:
+    <<: *DOCKER_NODE
+    resource_class: small
+    steps:
+      - checkout
+      - restore_cache:
+          key: v3-npm-{{ checksum "package-lock.json" }}
+      - run: npm ci
+      - run: npm ls
+      - save_cache:
+          key: v3-npm-{{ checksum "package-lock.json" }}
+          paths:
+            - ~/.npm
+      - persist_to_workspace:
+          root: ~/
+          paths:
+            - project
+      - slack/notify-on-failure
+
+  lint:
+    <<: *DOCKER_NODE
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: ~/
+      - run: npm run lint
+      - slack/notify-on-failure
+
+  typecheck:
+    <<: *DOCKER_NODE
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: ~/
+      - run:
+          command: npm run typecheck
+          no_output_timeout: 1m
+      - slack/notify-on-failure
+
+  build:
+    <<: *DOCKER_NODE
+    steps:
+      - attach_workspace:
+          at: ~/
+      - run: npm run build
+      - persist_to_workspace:
+          root: ~/
+          paths:
+            - project
+      - slack/notify-on-failure
+
+  release:
+    <<: *DOCKER_NODE
+    steps:
+      - attach_workspace:
+          at: ~/
+      - run: npx semantic-release
+      - slack/notify-on-failure
+
+workflows:
+  version: 2
+  test_and_release:
+    jobs:
+      - install
+      - lint:
+          requires:
+            - install
+      - typecheck:
+          requires:
+            - install
+      - build:
+          requires:
+            - lint
+            - typecheck
+      - release:
+          requires:
+            - build
+          filters:
+            branches:
+              only:
+                - master
