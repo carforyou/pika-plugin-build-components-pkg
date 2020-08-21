@@ -63,5 +63,8 @@
   },
   "release": {
     "pkgRoot": "pkg"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
