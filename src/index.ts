@@ -24,8 +24,6 @@ export async function beforeJob(options: BuilderOptions) {
 
   // tsc ignores module.css files - copy them to pkg/dist-src manually
   await cpy([`${path.join(out, "../**/*.module.css")}`], srcDir)
-  await cpy([`${path.join(out, "../**/*.module.css")}`], path.join(out, "dist-node"))
-  await cpy([`${path.join(out, "../**/*.module.css")}`], path.join(out, "dist-web"))
 }
 
 export async function afterJob(options: BuilderOptions) {
