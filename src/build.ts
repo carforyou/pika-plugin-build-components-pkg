@@ -7,16 +7,15 @@ import babelPresetEnv from "@babel/preset-env"
 import babelPluginDynamicImport from "babel-plugin-dynamic-import-node-babel-7"
 import builtinModules from "builtin-modules"
 import rollupBabel from "rollup-plugin-babel"
-import smartAsset from "rollup-plugin-smart-asset"
+import postcss from "rollup-plugin-postcss"
 
 const DEFAULT_MIN_NODE_VERSION = 8
-const cssModulesTransformPlugin = [
-  "css-modules-transform",
-  { keepImport: true, extensions: [".module.css"] }
-  // todo: classes are properly included in the build - but what about the css?
-  // smart-assets anyway?
-]
-const smartAssetPlugin = (rebasePath) => smartAsset({include: "**/*.module.css", keepImport: true, url: "rebase", rebasePath})
+const postcssPlugin = () => {
+  return postcss({
+    extract: false,
+    modules: true
+  })
+}
 
 // copy of https://www.npmjs.com/package/@pika/plugin-build-web
 // with additional rollup plugins
@@ -27,20 +26,11 @@ export async function webBuild({
 }: BuilderOptions): Promise<void> {
   const writeToWeb = path.join(out, "dist-web", "index.js")
 
-  console.log("xxx", path.join(out, "dist-src"))
   const result = await rollup({
     input: path.join(out, "dist-src/index.js"),
-    plugins: [
-      smartAssetPlugin(path.join(out, "dist-src")),
-      rollupBabel({
-        babelrc: false,
-        compact: false,
-        // plugins: []
-        // plugins: [cssModulesTransformPlugin]
-      })
-    ],
+    plugins: [postcssPlugin()],
     onwarn: ((warning, defaultOnWarnHandler) => {
-      // // Unresolved external imports are expected
+      // Unresolved external imports are expected
       if (
         warning.code === "UNRESOLVED_IMPORT" &&
         !(warning.source.startsWith("./") || warning.source.startsWith("../"))
@@ -70,12 +60,11 @@ export async function nodeBuild({
   const outFile = path.join(out, "dist-node", "index.js")
   const srcFile = path.join(out, "dist-src", "node.js")
 
-  console.log(path.join(out, "dist-src"))
   const result = await rollup({
     input: srcFile,
     external: builtinModules as string[],
     plugins: [
-      smartAssetPlugin(path.join(out, "dist-src")),
+      postcssPlugin(),
       rollupBabel({
         babelrc: false,
         compact: false,
@@ -92,7 +81,6 @@ export async function nodeBuild({
           ]
         ],
         plugins: [
-          // cssModulesTransformPlugin,
           babelPluginDynamicImport,
           babelPluginDynamicImportSyntax,
           babelPluginImportMetaSyntax
