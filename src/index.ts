@@ -17,15 +17,24 @@ export function manifest(manif, builderOptions: BuilderOptions) {
 
 export async function beforeBuild(options: BuilderOptions) {
   const { out } = options
+  // eslint-disable-next-line no-console
   console.log("copy", `${path.join(out, "../src/**/*.module.css")}`)
 
-  console.log({cwd: process.cwd() , out})
+  // eslint-disable-next-line no-console
+  console.log({ cwd: process.cwd(), out })
   // tsc ignores module.css files - copy them to pkg/dist-src manually
-  await cpy([`${path.join(out, "../src/**/*.module.css")}`], path.join(out, "dist-src"), { parents: false, filter: file =>{
-    console.log({file})
-    return true
-  }
-})
+  await cpy(
+    [`${path.join(out, "../src/**/*.module.css")}`],
+    path.join(out, "dist-src"),
+    {
+      parents: true,
+      filter: file => {
+        // eslint-disable-next-line no-console
+        console.log({ file })
+        return true
+      }
+    }
+  )
 }
 
 export async function beforeJob(options: BuilderOptions) {
