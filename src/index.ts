@@ -15,15 +15,24 @@ export function manifest(manif, builderOptions: BuilderOptions) {
   nodeManifest(manif, builderOptions)
 }
 
+export async function beforeBuild(options: BuilderOptions) {
+  const { out } = options
+  console.log("copy", `${path.join(out, "../src/**/*.module.css")}`)
+
+  console.log({cwd: process.cwd() , out})
+  // tsc ignores module.css files - copy them to pkg/dist-src manually
+  await cpy([`${path.join(out, "../src/**/*.module.css")}`], path.join(out, "dist-src"), { parents: false, filter: file =>{
+    console.log({file})
+    return true
+  }
+})
+}
+
 export async function beforeJob(options: BuilderOptions) {
   const { out } = options
-  const srcDir = path.join(out, "dist-src")
 
   await webBeforeJob(options)
-  await nodeBeforeJob(srcDir)
-
-  // tsc ignores module.css files - copy them to pkg/dist-src manually
-  await cpy([`${path.join(out, "../**/*.module.css")}`], srcDir)
+  await nodeBeforeJob(path.join(out, "dist-src"))
 }
 
 export async function afterJob(options: BuilderOptions) {
