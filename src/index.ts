@@ -18,10 +18,10 @@ export function manifest(manif, builderOptions: BuilderOptions) {
 export async function beforeBuild(options: BuilderOptions) {
   const { out } = options
   // eslint-disable-next-line no-console
-  console.log("copy", `${path.join(out, "../src/**/*.module.css")}`)
+  // console.log("copy", `${path.join(out, "../src/**/*.module.css")}`)
 
   // eslint-disable-next-line no-console
-  console.log({ cwd: process.cwd(), out })
+  // console.log({ cwd: process.cwd(), out })
   // tsc ignores module.css files - copy them to pkg/dist-src manually
   await cpy(
     [`${path.join(out, "../src/**/*.module.css")}`],
@@ -30,7 +30,7 @@ export async function beforeBuild(options: BuilderOptions) {
       parents: true,
       filter: file => {
         // eslint-disable-next-line no-console
-        console.log({ file })
+        // console.log({ file })
         return true
       }
     }
