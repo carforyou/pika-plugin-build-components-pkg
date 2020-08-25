@@ -100,9 +100,9 @@ workflows:
               only:
                 - master
       - pre_release:
-        requires:
-          - build
-          - typecheck
-        filters:
-          branches:
-            ignore: master
+          requires:
+            - build
+            - typecheck
+          filters:
+            branches:
+              ignore: master
