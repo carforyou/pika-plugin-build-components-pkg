@@ -102,7 +102,6 @@ workflows:
       - pre_release:
           requires:
             - build
-            - typecheck
           filters:
             branches:
               ignore: master
