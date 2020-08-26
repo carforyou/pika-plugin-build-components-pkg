@@ -72,6 +72,14 @@ jobs:
       - slack/notify-on-failure:
           only_for_branches: master
 
+  pre_release:
+    <<: *DOCKER_NODE
+    steps:
+      - attach_workspace:
+          at: ~/
+      # manually set PR shell variables to empty to build pull request
+      - run: CI_PULL_REQUEST= CIRCLE_PULL_REQUEST= npx semantic-release
+
 workflows:
   version: 2
   test_and_release:
@@ -94,3 +102,9 @@ workflows:
             branches:
               only:
                 - master
+      - pre_release:
+          requires:
+            - build
+          filters:
+            branches:
+              ignore: master
