@@ -15,15 +15,33 @@ export function manifest(manif, builderOptions: BuilderOptions) {
   nodeManifest(manif, builderOptions)
 }
 
+export async function beforeBuild(options: BuilderOptions) {
+  const { out } = options
+  // eslint-disable-next-line no-console
+  // console.log("copy", `${path.join(out, "../src/**/*.module.css")}`)
+
+  // eslint-disable-next-line no-console
+  // console.log({ cwd: process.cwd(), out })
+  // tsc ignores module.css files - copy them to pkg/dist-src manually
+  await cpy(
+    [`${path.join(out, "../src/**/*.module.css")}`],
+    path.join(out, "dist-src"),
+    {
+      parents: true,
+      filter: file => {
+        // eslint-disable-next-line no-console
+        // console.log({ file })
+        return true
+      }
+    }
+  )
+}
+
 export async function beforeJob(options: BuilderOptions) {
   const { out } = options
-  const srcDir = path.join(out, "dist-src")
 
   await webBeforeJob(options)
-  await nodeBeforeJob(srcDir)
-
-  // tsc ignores module.css files - copy them to pkg/dist-src manually
-  await cpy([`${path.join(out, "../**/*.module.css")}`], srcDir)
+  await nodeBeforeJob(path.join(out, "dist-src"))
 }
 
 export async function afterJob(options: BuilderOptions) {
