@@ -18,12 +18,16 @@ export function manifest(manif, builderOptions: BuilderOptions) {
 export async function beforeBuild(options: BuilderOptions) {
   // tsc ignores module.css files - copy them to pkg/dist-src manually
   return new Promise((resolve, reject) => {
-    copyfiles(["src/**/*.module.css", "pkg/dist-src"], { up: 1, follow: true, error: true},  (err, res) => {
-      if(err) {
-        reject(err)
+    copyfiles(
+      ["src/**/*.module.css", "pkg/dist-src"],
+      { up: 1, follow: true, error: true },
+      (err, res) => {
+        if (err) {
+          reject(err)
+        }
+        resolve(res)
       }
-      resolve(res)
-    })
+    )
   })
 }
 
