@@ -1,5 +1,5 @@
 import path from "path"
-import cpy from "cpy"
+import copyfiles from "copyfiles"
 import { BuilderOptions } from "@pika/types"
 import {
   manifest as webManifest,
@@ -16,25 +16,15 @@ export function manifest(manif, builderOptions: BuilderOptions) {
 }
 
 export async function beforeBuild(options: BuilderOptions) {
-  const { out } = options
-  // eslint-disable-next-line no-console
-  // console.log("copy", `${path.join(out, "../src/**/*.module.css")}`)
-
-  // eslint-disable-next-line no-console
-  // console.log({ cwd: process.cwd(), out })
   // tsc ignores module.css files - copy them to pkg/dist-src manually
-  await cpy(
-    [`${path.join(out, "../src/**/*.module.css")}`],
-    path.join(out, "dist-src"),
-    {
-      parents: true,
-      filter: file => {
-        // eslint-disable-next-line no-console
-        // console.log({ file })
-        return true
+  return new Promise((resolve, reject) => {
+    copyfiles(["src/**/*.module.css", "pkg/dist-src"], { up: 1, follow: true, error: true},  (err, res) => {
+      if(err) {
+        reject(err)
       }
-    }
-  )
+      resolve(res)
+    })
+  })
 }
 
 export async function beforeJob(options: BuilderOptions) {
