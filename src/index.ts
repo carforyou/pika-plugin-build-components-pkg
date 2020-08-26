@@ -1,5 +1,5 @@
 import path from "path"
-import cpy from "cpy"
+import copyfiles from "copyfiles"
 import { BuilderOptions } from "@pika/types"
 import {
   manifest as webManifest,
@@ -15,15 +15,27 @@ export function manifest(manif, builderOptions: BuilderOptions) {
   nodeManifest(manif, builderOptions)
 }
 
+export async function beforeBuild(options: BuilderOptions) {
+  // tsc ignores module.css files - copy them to pkg/dist-src manually
+  return new Promise((resolve, reject) => {
+    copyfiles(
+      ["src/**/*.module.css", "pkg/dist-src"],
+      { up: 1, follow: true, error: true },
+      (err, res) => {
+        if (err) {
+          reject(err)
+        }
+        resolve(res)
+      }
+    )
+  })
+}
+
 export async function beforeJob(options: BuilderOptions) {
   const { out } = options
-  const srcDir = path.join(out, "dist-src")
 
   await webBeforeJob(options)
-  await nodeBeforeJob(srcDir)
-
-  // tsc ignores module.css files - copy them to pkg/dist-src manually
-  await cpy([`${path.join(out, "../**/*.module.css")}`], srcDir)
+  await nodeBeforeJob(path.join(out, "dist-src"))
 }
 
 export async function afterJob(options: BuilderOptions) {
