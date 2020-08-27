@@ -20,7 +20,7 @@ export async function beforeBuild(options: BuilderOptions) {
   return new Promise((resolve, reject) => {
     copyfiles(
       ["src/**/*.module.css", "pkg/dist-src"],
-      { up: 1, follow: true, error: true },
+      { up: 1, follow: true },
       (err, res) => {
         if (err) {
           reject(err)
