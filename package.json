@@ -43,7 +43,7 @@
     "semantic-release": "^17.1.1",
     "ts-jest": "^26.2.0",
     "tslint": "^5.20.1",
-    "typescript": "^3.7.4"
+    "typescript": "^4.0.0"
   },
   "@pika/pack": {
     "pipeline": [
