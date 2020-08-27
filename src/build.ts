@@ -1,5 +1,5 @@
 import path from "path"
-import { rollup } from "rollup"
+import { rollup, WarningHandlerWithDefault } from "rollup"
 import { BuilderOptions } from "@pika/types"
 import babelPluginDynamicImportSyntax from "@babel/plugin-syntax-dynamic-import"
 import babelPluginImportMetaSyntax from "@babel/plugin-syntax-import-meta"
@@ -9,11 +9,11 @@ import builtinModules from "builtin-modules"
 import rollupBabel from "rollup-plugin-babel"
 import postcss from "rollup-plugin-postcss"
 
-const DEFAULT_MIN_NODE_VERSION = 8
+const defaultMinNodeVersion = 8
 const postcssPlugin = () => {
   return postcss({
     extract: false,
-    modules: true
+    modules: true,
   })
 }
 
@@ -22,7 +22,7 @@ const postcssPlugin = () => {
 export async function webBuild({
   out,
   options,
-  reporter
+  reporter,
 }: BuilderOptions): Promise<void> {
   const writeToWeb = path.join(out, "dist-web", "index.js")
 
@@ -38,14 +38,14 @@ export async function webBuild({
         return
       }
       defaultOnWarnHandler(warning)
-    }) as any
+    }) as WarningHandlerWithDefault,
   })
 
   await result.write({
     file: writeToWeb,
     format: "esm",
     exports: "named",
-    sourcemap: options.sourcemap === undefined ? true : options.sourcemap
+    sourcemap: options.sourcemap === undefined ? true : options.sourcemap,
   })
   reporter.created(writeToWeb, "module")
 }
@@ -55,7 +55,7 @@ export async function webBuild({
 export async function nodeBuild({
   out,
   reporter,
-  options
+  options,
 }: BuilderOptions): Promise<void> {
   const outFile = path.join(out, "dist-node", "index.js")
   const srcFile = path.join(out, "dist-src", "node.js")
@@ -74,18 +74,18 @@ export async function nodeBuild({
             {
               modules: false,
               targets: {
-                node: options.minNodeVersion || DEFAULT_MIN_NODE_VERSION
+                node: options.minNodeVersion || defaultMinNodeVersion,
               },
-              spec: true
-            }
-          ]
+              spec: true,
+            },
+          ],
         ],
         plugins: [
           babelPluginDynamicImport,
           babelPluginDynamicImportSyntax,
-          babelPluginImportMetaSyntax
-        ]
-      })
+          babelPluginImportMetaSyntax,
+        ],
+      }),
     ],
     onwarn: ((warning, defaultOnWarnHandler) => {
       // Unresolved external imports are expected
@@ -96,14 +96,14 @@ export async function nodeBuild({
         return
       }
       defaultOnWarnHandler(warning)
-    }) as any
+    }) as WarningHandlerWithDefault,
   })
 
   await result.write({
     file: outFile,
     format: "cjs",
     exports: "named",
-    sourcemap: options.sourcemap === undefined ? true : options.sourcemap
+    sourcemap: options.sourcemap === undefined ? true : options.sourcemap,
   })
   reporter.created(outFile, "main")
 }
