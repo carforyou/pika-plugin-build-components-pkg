@@ -31,7 +31,7 @@
     "eslint-plugin-prettier": "^3.1.4",
     "postcss": "^7.0.32",
     "prettier": "^2.1.1",
-    "rollup": "^1.29.0",
+    "rollup": "^2.0.0",
     "rollup-plugin-babel": "^4.3.3",
     "rollup-plugin-postcss": "^3.1.5",
     "tslint": "^6.1.3"
