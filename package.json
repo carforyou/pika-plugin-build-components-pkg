@@ -5,8 +5,8 @@
   "scripts": {
     "version": "npm run build",
     "build": "pika build",
-    "lint": "tslint --project tsconfig.lint.json",
-    "format": "tslint --project tsconfig.lint.json --fix",
+    "lint": "eslint --ext ts,js,tsx,jsx,json .",
+    "format": "npm run lint -- --fix",
     "typecheck": "tsc --noEmit",
     "test": "jest",
     "test:debug": "node --inspect-brk --inspect=127.0.0.1:9229 ./node_modules/jest/bin/jest.js --runInBand"
@@ -28,22 +28,23 @@
     "babel-plugin-dynamic-import-node-babel-7": "^2.0.7",
     "builtin-modules": "^3.1.0",
     "copyfiles": "^2.3.0",
+    "eslint-plugin-prettier": "^3.1.4",
     "postcss": "^7.0.32",
+    "prettier": "^2.1.1",
     "rollup": "^1.29.0",
     "rollup-plugin-babel": "^4.3.3",
-    "rollup-plugin-postcss": "^3.1.5"
+    "rollup-plugin-postcss": "^3.1.5",
+    "tslint": "^6.1.3"
   },
   "devDependencies": {
-    "@carforyou/tslint-rules": "^1.1.0",
+    "@carforyou/eslint-config": "2.0.0",
     "@pika/pack": "^0.5.0",
     "@pika/plugin-ts-standard-pkg": "^0.9.0",
     "@types/jest": "^24.0.25",
     "jest": "^26.4.2",
-    "prettier": "^1.19.1",
     "semantic-release": "^17.1.1",
-    "ts-jest": "^26.2.0",
-    "tslint": "^5.20.1",
-    "typescript": "^3.7.4"
+    "ts-jest": "^26.3.0",
+    "typescript": "^4.0.0"
   },
   "@pika/pack": {
     "pipeline": [

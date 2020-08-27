@@ -3,7 +3,7 @@ import copyfiles from "copyfiles"
 import { BuilderOptions } from "@pika/types"
 import {
   manifest as webManifest,
-  beforeJob as webBeforeJob
+  beforeJob as webBeforeJob,
 } from "@pika/plugin-build-web"
 import { manifest as nodeManifest } from "@pika/plugin-build-node"
 
@@ -15,7 +15,7 @@ export function manifest(manif, builderOptions: BuilderOptions) {
   nodeManifest(manif, builderOptions)
 }
 
-export async function beforeBuild(options: BuilderOptions) {
+export async function beforeBuild(_options: BuilderOptions) {
   // tsc ignores module.css files - copy them to pkg/dist-src manually
   return new Promise((resolve, reject) => {
     copyfiles(
