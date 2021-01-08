@@ -2,8 +2,8 @@ import path from "path"
 import copyfiles from "copyfiles"
 import { BuilderOptions } from "@pika/types"
 import {
-  manifest as webManifest,
   beforeJob as webBeforeJob,
+  manifest as webManifest,
 } from "@pika/plugin-build-web"
 import { manifest as nodeManifest } from "@pika/plugin-build-node"
 

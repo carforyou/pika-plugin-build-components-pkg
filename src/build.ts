@@ -1,13 +1,13 @@
-import path from "path"
-import { rollup, WarningHandlerWithDefault } from "rollup"
-import { BuilderOptions } from "@pika/types"
-import babelPluginDynamicImportSyntax from "@babel/plugin-syntax-dynamic-import"
-import babelPluginImportMetaSyntax from "@babel/plugin-syntax-import-meta"
-import babelPresetEnv from "@babel/preset-env"
-import babelPluginDynamicImport from "babel-plugin-dynamic-import-node-babel-7"
-import builtinModules from "builtin-modules"
-import rollupBabel from "rollup-plugin-babel"
 import postcss from "rollup-plugin-postcss"
+import rollupBabel from "rollup-plugin-babel"
+import { rollup, WarningHandlerWithDefault } from "rollup"
+import path from "path"
+import builtinModules from "builtin-modules"
+import babelPluginDynamicImport from "babel-plugin-dynamic-import-node-babel-7"
+import { BuilderOptions } from "@pika/types"
+import babelPresetEnv from "@babel/preset-env"
+import babelPluginImportMetaSyntax from "@babel/plugin-syntax-import-meta"
+import babelPluginDynamicImportSyntax from "@babel/plugin-syntax-dynamic-import"
 
 const defaultMinNodeVersion = 8
 const postcssPlugin = () => {
