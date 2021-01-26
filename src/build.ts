@@ -8,6 +8,7 @@ import { BuilderOptions } from "@pika/types"
 import babelPresetEnv from "@babel/preset-env"
 import babelPluginImportMetaSyntax from "@babel/plugin-syntax-import-meta"
 import babelPluginDynamicImportSyntax from "@babel/plugin-syntax-dynamic-import"
+import babelPluginOptionalChaining from "@babel/plugin-syntax-optional-chaining"
 
 const defaultMinNodeVersion = 8
 const postcssPlugin = () => {
@@ -84,6 +85,7 @@ export async function nodeBuild({
           babelPluginDynamicImport,
           babelPluginDynamicImportSyntax,
           babelPluginImportMetaSyntax,
+          babelPluginOptionalChaining
         ],
       }),
     ],
