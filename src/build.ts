@@ -30,6 +30,7 @@ export async function webBuild({
   const result = await rollup({
     input: path.join(out, "dist-src/index.js"),
     plugins: [postcssPlugin()],
+    external: ["react"],
     onwarn: ((warning, defaultOnWarnHandler) => {
       // Unresolved external imports are expected
       if (
