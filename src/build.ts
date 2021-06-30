@@ -12,7 +12,7 @@ import babelPluginDynamicImportSyntax from "@babel/plugin-syntax-dynamic-import"
 const defaultMinNodeVersion = 8
 const postcssPlugin = () => {
   return postcss({
-    extract: false,
+    extract: true,
     modules: true,
   })
 }
