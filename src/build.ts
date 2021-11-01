@@ -24,7 +24,8 @@ export async function webBuild({
   options,
   reporter,
 }: BuilderOptions): Promise<void> {
-  const writeToWeb = path.join(out, "dist-web", "index.js")
+  const separateChunks = options.separateChunks || []
+  const writeToWeb = path.join(out, "dist-web")
 
   const result = await rollup({
     input: path.join(out, "dist-src/index.js"),
@@ -42,7 +43,14 @@ export async function webBuild({
   })
 
   await result.write({
-    file: writeToWeb,
+    manualChunks: (id) => {
+      for (const chunk of separateChunks) {
+        if (id.includes(chunk)) {
+          return chunk
+        }
+      }
+    },
+    dir: writeToWeb,
     format: "esm",
     exports: "named",
     sourcemap: options.sourcemap === undefined ? true : options.sourcemap,
