@@ -44,11 +44,7 @@ export async function webBuild({
 
   await result.write({
     manualChunks: (id) => {
-      for (const chunk of separateChunks) {
-        if (id.includes(chunk)) {
-          return chunk
-        }
-      }
+      return separateChunks.find((chunk) => id.includes(chunk))
     },
     dir: writeToWeb,
     format: "esm",
