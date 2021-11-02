@@ -17,6 +17,20 @@ const postcssPlugin = () => {
   })
 }
 
+const getChunkName = (id: string) => {
+  return path.basename(path.dirname(id)) === "components"
+    ? path.basename(id)
+    : path.basename(path.dirname(id))
+}
+
+const isComponent = (id: string) => {
+  return id.includes("dist-src/components")
+}
+
+const isIcon = (id: string) => {
+  return id.includes("dist-src/assets/dist/icons")
+}
+
 // copy of https://www.npmjs.com/package/@pika/plugin-build-web
 // with additional rollup plugins
 export async function webBuild({
@@ -24,7 +38,6 @@ export async function webBuild({
   options,
   reporter,
 }: BuilderOptions): Promise<void> {
-  const separateChunks = options.separateChunks || []
   const writeToWeb = path.join(out, "dist-web")
 
   const result = await rollup({
@@ -43,8 +56,16 @@ export async function webBuild({
   })
 
   await result.write({
-    manualChunks: (id) => {
-      return separateChunks.find((chunk) => id.includes(chunk))
+    manualChunks: (id, { getModuleInfo }) => {
+      if (!isComponent(id) && getModuleInfo(id).importers.length === 1) {
+        return getChunkName(getModuleInfo(id).importers[0])
+      }
+      if (isIcon(id)) {
+        return "icons"
+      }
+      if (isComponent(id)) {
+        return getChunkName(id)
+      }
     },
     dir: writeToWeb,
     format: "esm",
