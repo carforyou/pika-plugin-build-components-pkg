@@ -17,6 +17,16 @@ const postcssPlugin = () => {
   })
 }
 
+const getChunkName = (id: string) => {
+  return path.basename(path.dirname(id)) === "components"
+    ? path.basename(id)
+    : path.basename(path.dirname(id))
+}
+
+const isComponent = (id: string) => {
+  return id.includes("dist-src/components")
+}
+
 // copy of https://www.npmjs.com/package/@pika/plugin-build-web
 // with additional rollup plugins
 export async function webBuild({
@@ -24,7 +34,7 @@ export async function webBuild({
   options,
   reporter,
 }: BuilderOptions): Promise<void> {
-  const writeToWeb = path.join(out, "dist-web", "index.js")
+  const writeToWeb = path.join(out, "dist-web")
 
   const result = await rollup({
     input: path.join(out, "dist-src/index.js"),
@@ -42,7 +52,12 @@ export async function webBuild({
   })
 
   await result.write({
-    file: writeToWeb,
+    manualChunks: (id) => {
+      if (isComponent(id)) {
+        return getChunkName(id)
+      }
+    },
+    dir: writeToWeb,
     format: "esm",
     exports: "named",
     sourcemap: options.sourcemap === undefined ? true : options.sourcemap,
